@@ -1,0 +1,55 @@
+Ensure that the STS certificate is valid before regenerating the certificate using Certificate Manager.
+If STS is expired or corrupted certificate regeneration will fail due to Service dependencies failure to start without a valid token.
+This task replaces the VMCA Root Certificate with a new self-signed certificate and then the MachineSSL and Solution User certificates with new certificates issued by the VMCA.
+If you are running an external Platform Services Controller, you need to run the vSphere 6.x Certificate Manager on the external vCenter Server 6.x and perform these tasks:
+ 
+Replace Machine SSL certificate with VMCA Certificate (Option 3)
+Replace Solution user certificates with VMCA certificates (Option 6)
+Note: Certificate Replacement with the below steps will fail and rollback if the STS Certificate (Signing Certificate) is expired. Please follow KB Checking Expiration of STS Certificate on vCenter Server to verify the Validity of the STS Certificate, which includes the links to KBs for STS Certificate replacement if it is already expired.
+
+Follow the below steps to replace other Certificates after replacing the STS Certificate.
+
+To regenerate the vSphere 6.x certificates using a new self-signed VMware Certificate Authority certificate:
+Launch the vSphere 6.x Certificate Manager.
+
+For vCenter Server 6.x/7.x Appliance: /usr/lib/vmware-vmca/bin/certificate-manager
+For Windows vCenter Server 6.x: C:\Program Files\VMware\vCenter Server\vmcad\certificate-manager
+ 
+Select Option 4 (Regenerate a new VMCA Root Certificate and replace all certificates)
+
+Note: You can also select Option 8 (Reset all Certificates). Both options perform the same functionality. (The difference is that option 8 does not perform automatic Rollback of the certificates).
+
+certificate vmware
+ 
+Type the administrator@vsphere.local password when prompted.
+If this is the first time VMCA certificates are re-generated on this system, you are asked to configure the certool.cfg. On subsequent tasks, you are offered to re-use these values.
+
+Note: These values are used to define certificates issued by VMCA.
+
+Enter these values as prompted by the VMCA (See Step 5 to confirm the Name/Hostname/VMCA):
+
+Please configure certool.cfg file with proper values before proceeding to next step.
+Press Enter key to skip optional parameters or use Default value.
+Enter proper value for 'Country' [Default value : US] : (Note: Value for Country should be only 2 letters)
+Enter proper value for 'Name' [Default value : CA] :
+Enter proper value for 'Organization' [Default value : VMware] :
+Enter proper value for 'OrgUnit' [Default value : VMware Engineering] :
+Enter proper value for 'State' [Default value : California] :
+Enter proper value for 'Locality' [Default value : Palo Alto] :
+Enter proper value for 'IPAddress' [optional] :
+Enter proper value for 'Email' [Default value : email@acme.com] :
+Enter proper value for 'Hostname' [Enter valid Fully Qualified Domain Name(FQDN), For Example : example.domain.com] :
+Enter proper value for VMCA 'Name': (Note: This information will be requested from vCenter Server 6.0 U3, 6.5 and later builds, you may use the FQDN/PNID of vCenter Server for this field. It will be used as a Common Name for the VMCA Root Certificate)
+ 
+Type Yes (Y) to the confirmation request to proceed.
+
+You are going to regenerate Root Certificate and all other certificates using VMCA
+Continue operation : Option[Y/N] ? : Y
+
+Note: The Name, Hostname and VMCA values should match the PNID of the Node where you are replacing the Certificates. PNID should always match the Hostname. In order to obtain the PNID please run these commands:
+For vCenter Server Appliance (VCSA)
+/usr/lib/vmware-vmafd/bin/vmafd-cli get-pnid --server-name localhost
+
+VMCA certificates
+For Windows vCenter Server
+C:\Program Files\VMware\vCenter Server\vmafdd\" vmafd-cli.exe get-pnid --server-name localhost
