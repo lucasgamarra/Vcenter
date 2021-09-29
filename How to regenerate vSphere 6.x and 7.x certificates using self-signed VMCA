@@ -1,3 +1,9 @@
+The following one-liner can determine other expired certificates for the vCenter Server Appliance:     
+ 
+for i in $(/usr/lib/vmware-vmafd/bin/vecs-cli store list); do echo STORE $i; sudo /usr/lib/vmware-vmafd/bin/vecs-cli entry list --store $i --text | egrep "Alias|Not After"; done
+
+
+
 Ensure that the STS certificate is valid before regenerating the certificate using Certificate Manager.
 If STS is expired or corrupted certificate regeneration will fail due to Service dependencies failure to start without a valid token.
 This task replaces the VMCA Root Certificate with a new self-signed certificate and then the MachineSSL and Solution User certificates with new certificates issued by the VMCA.
